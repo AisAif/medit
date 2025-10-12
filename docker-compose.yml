@@ -1,0 +1,17 @@
+services:
+  media-editor:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: media-editor-app
+    restart: unless-stopped
+    environment:
+      - NODE_ENV=production
+    ports:
+      - "${APP_PORT:-8080}:3000"
+    networks:
+      - media-editor-network
+
+networks:
+  media-editor-network:
+    driver: bridge

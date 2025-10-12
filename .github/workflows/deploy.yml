@@ -1,0 +1,92 @@
+name: Deploy to VPS
+
+on:
+  push:
+    branches:
+      - main
+      - master
+  workflow_dispatch:
+
+env:
+  DOCKER_IMAGE: media-editor
+  DOCKER_TAG: latest
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: true
+          tags: ${{ secrets.DOCKER_USERNAME }}/${{ env.DOCKER_IMAGE }}:${{ env.DOCKER_TAG }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Deploy to VPS
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USERNAME }}
+          password: ${{ secrets.VPS_PASSWORD }}
+          key: ${{ secrets.VPS_SSH_KEY }}
+          port: ${{ secrets.VPS_SSH_PORT }}
+          script: |
+            # Set deployment directory - can be customized per application
+            DEPLOY_PATH=${{ secrets.VPS_DEPLOY_PATH || '/opt/media-editor' }}
+
+            # Create deployment directory if it doesn't exist
+            mkdir -p $DEPLOY_PATH
+
+            # Navigate to deployment directory
+            cd $DEPLOY_PATH
+
+            # Initialize repo if not exists, otherwise force pull latest changes
+            if [ ! -d ".git" ]; then
+              echo "Cloning repository..."
+              git clone https://github.com/${{ github.repository }}.git .
+              chmod +x deploy.sh
+            else
+              echo "Force pulling latest changes..."
+              git fetch origin
+              git reset --hard origin/${{ github.head_ref || github.ref_name }}
+            fi
+
+            # Set custom port (default is 8080)
+            export APP_PORT=${{ secrets.APP_PORT || '8080' }}
+
+            # Stop existing containers
+            docker compose down
+
+            # Clean up old images
+            docker system prune -f
+
+            # Start application
+            docker compose up -d --build
+
+            # Wait for application to be healthy
+            sleep 45
+
+            # Check if application is running
+            if curl -f http://localhost:${APP_PORT}; then
+              echo "✅ Deployment successful! Media Editor is running on port ${{ secrets.APP_PORT || '8080' }}"
+              echo "🌐 Access your app at: http://$(hostname -I | awk '{print $1}'):${{ secrets.APP_PORT || '8080' }}"
+            else
+              echo "❌ Deployment failed - application not responding on port ${{ secrets.APP_PORT || '8080' }}"
+              docker compose logs
+              exit 1
+            fi
