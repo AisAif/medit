@@ -5,17 +5,18 @@
     <slot name="resize" v-else-if="tool === 'resize' && imageLoaded"></slot>
 
     <slot name="adjust" v-else-if="tool === 'adjust' && imageLoaded"></slot>
+    <slot name="crop" v-else-if="tool === 'crop' && imageLoaded"></slot>
     <slot name="filter" v-else-if="tool === 'filter' && imageLoaded"></slot>
     <slot name="export" v-else-if="tool === 'export' && imageLoaded"></slot>
     <div v-else class="text-sm text-muted-foreground">
-      Pilih alat di toolbar.
+      Select a tool from the toolbar.
     </div>
   </section>
 </template>
 <script setup lang="ts">
 const props = defineProps<{
   imageLoaded: boolean;
-  tool: "upload" | "adjust" | "filter" | "resize" | "export";
+  tool: "upload" | "adjust" | "filter" | "resize" | "crop" | "export";
 }>();
 </script>
 

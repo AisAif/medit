@@ -6,7 +6,8 @@ export function useCanvas(
   scale: any,
   offset: any,
   rotation: any,
-  flip: any
+  flip: any,
+  cropSelection?: any
 ) {
   const canvasRef = ref<HTMLCanvasElement | null>(null);
   const canvasContainer = ref<HTMLDivElement | null>(null);
@@ -55,11 +56,48 @@ export function useCanvas(
       c2.drawImage(img, -img.width / 2, -img.height / 2);
     }
 
+    // Draw crop selection rectangle
+    if (cropSelection && cropSelection.value) {
+      const sel = cropSelection.value;
+      c2.save();
+      c2.filter = "none"; // Remove filter for overlay
+      c2.globalAlpha = 0.7;
+
+      // Draw semi-transparent overlay over unselected areas
+      c2.fillStyle = "rgba(0, 0, 0, 0.5)";
+      c2.fillRect(-img.width / 2, -img.height / 2, img.width, img.height);
+
+      // Clear the selected area
+      c2.globalCompositeOperation = "destination-out";
+      c2.fillStyle = "white";
+      c2.fillRect(
+        sel.x - img.width / 2,
+        sel.y - img.height / 2,
+        sel.width,
+        sel.height
+      );
+
+      // Draw selection border
+      c2.globalCompositeOperation = "source-over";
+      c2.globalAlpha = 1;
+      c2.strokeStyle = "#ffffff";
+      c2.lineWidth = 2 / scale.value;
+      c2.setLineDash([8 / scale.value, 4 / scale.value]);
+      c2.strokeRect(
+        sel.x - img.width / 2,
+        sel.y - img.height / 2,
+        sel.width,
+        sel.height
+      );
+
+      c2.restore();
+    }
+
     c2.restore();
   }
 
   watch(
-    [scale, offset, rotation, flip, filterString, baseImage],
+    [scale, offset, rotation, flip, filterString, baseImage, cropSelection],
     () => draw(),
     { deep: true }
   );

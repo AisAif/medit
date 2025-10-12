@@ -1,6 +1,12 @@
 import { defineStore } from "pinia";
 
-export type Tool = "upload" | "adjust" | "filter" | "resize" | "export";
+export type Tool =
+  | "upload"
+  | "adjust"
+  | "filter"
+  | "resize"
+  | "crop"
+  | "export";
 
 export const useEditorStore = defineStore("editor", {
   state: () => ({
@@ -24,6 +30,14 @@ export const useEditorStore = defineStore("editor", {
     resizeH: 0,
     exportFormat: "image/png" as "image/png" | "image/jpeg",
     exportQuality: 0.9,
+    // Crop state
+    cropSelection: null as {
+      x: number;
+      y: number;
+      width: number;
+      height: number;
+    } | null,
+    isCropping: false,
   }),
   getters: {
     imageLoaded: (s) => !!s.baseImage,
@@ -191,6 +205,46 @@ export const useEditorStore = defineStore("editor", {
     },
     flipV() {
       this.flip.y *= -1;
+    },
+    // Crop actions
+    startCrop() {
+      this.tool = "crop";
+      this.isCropping = true;
+      this.cropSelection = null;
+    },
+    setCropSelection(
+      selection: { x: number; y: number; width: number; height: number } | null
+    ) {
+      this.cropSelection = selection;
+    },
+    applyCrop() {
+      if (!this.baseImage || !this.cropSelection) return;
+      const sel = this.cropSelection;
+      const img = this.baseImage;
+      const w = Math.max(1, Math.round(sel.width));
+      const h = Math.max(1, Math.round(sel.height));
+      const out = document.createElement("canvas");
+      out.width = w;
+      out.height = h;
+      const octx = out.getContext("2d")!;
+      octx.imageSmoothingQuality = "high";
+      octx.filter = this.filterString;
+      octx.drawImage(img, sel.x, sel.y, sel.width, sel.height, 0, 0, w, h);
+      const newImg = new Image();
+      newImg.onload = () => {
+        this.baseImage = newImg;
+        this.scale = 1;
+        this.offset = { x: 0, y: 0 };
+        this.cropSelection = null;
+        this.isCropping = false;
+        this.tool = "adjust";
+      };
+      newImg.src = out.toDataURL("image/png");
+    },
+    cancelCrop() {
+      this.cropSelection = null;
+      this.isCropping = false;
+      this.tool = "adjust";
     },
   },
 });

@@ -1,6 +1,6 @@
 <template>
   <div class="space-y-3">
-    <h2 class="font-semibold mb-3">Upload Gambar</h2>
+    <h2 class="font-semibold mb-3">Upload Image</h2>
     <input
       type="file"
       accept="image/*"

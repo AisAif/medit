@@ -1,6 +1,6 @@
 <template>
   <div class="space-y-3">
-    <h2 class="font-semibold">Penyesuaian</h2>
+    <h2 class="font-semibold">Adjustments</h2>
     <AppRange
       label="Brightness"
       v-model="store.filters.brightness"

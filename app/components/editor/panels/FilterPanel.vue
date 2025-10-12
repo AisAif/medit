@@ -1,6 +1,6 @@
 <template>
   <div class="space-y-3">
-    <h2 class="font-semibold">Preset Cepat</h2>
+    <h2 class="font-semibold">Quick Preset</h2>
     <div class="grid grid-cols-2 gap-2">
       <AppButton variant="outline" @click="store.applyPreset('warm')"
         >Warm</AppButton

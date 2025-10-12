@@ -1,6 +1,6 @@
 <template>
   <div class="space-y-3">
-    <h2 class="font-semibold">Ekspor</h2>
+    <h2 class="font-semibold">Export</h2>
     <div>
       <label class="text-xs text-muted-foreground">Format</label>
       <AppSelect v-model="store.exportFormat">
@@ -9,7 +9,7 @@
       </AppSelect>
     </div>
     <div>
-      <label class="text-xs text-muted-foreground">Kualitas</label>
+      <label class="text-xs text-muted-foreground">Quality</label>
       <input
         type="range"
         min="0.1"

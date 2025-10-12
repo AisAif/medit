@@ -49,6 +49,14 @@
         <FlipVertical class="size-5" />
       </IconButton>
       <IconButton
+        :active="tool === 'crop'"
+        :disabled="!imageLoaded"
+        title="Crop"
+        @click="$emit('update:tool', 'crop')"
+      >
+        <Scissors class="size-5" />
+      </IconButton>
+      <IconButton
         :active="tool === 'resize'"
         :disabled="!imageLoaded"
         title="Resize"
@@ -83,6 +91,7 @@ import {
   RotateCw,
   FlipHorizontal,
   FlipVertical,
+  Scissors,
   ZoomIn,
   ZoomOut,
   ImageUp,
@@ -92,13 +101,13 @@ import { useEditorStore } from "@/stores/editor";
 const store = useEditorStore();
 const { imageLoaded, tool } = defineProps<{
   imageLoaded: boolean;
-  tool: "upload" | "adjust" | "filter" | "resize" | "export";
+  tool: "upload" | "adjust" | "filter" | "resize" | "crop" | "export";
 }>();
 
 const emit = defineEmits<{
   (
     e: "update:tool",
-    v: "upload" | "adjust" | "filter" | "resize" | "export"
+    v: "upload" | "adjust" | "filter" | "resize" | "crop" | "export"
   ): void;
   (e: "rotate"): void;
   (e: "flipH"): void;
