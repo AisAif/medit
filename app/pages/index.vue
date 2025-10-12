@@ -5,15 +5,14 @@
       class="col-span-3 flex items-center justify-between px-4 py-3 border-b bg-gradient-to-r from-sky-50 via-fuchsia-50 to-pink-50"
     >
       <div class="flex items-center gap-3">
-        <div
-          class="size-8 rounded-xl bg-sky-500/90 shadow-md grid place-items-center text-white font-bold"
-        >
-          ME
-        </div>
+        <img
+          src="/logo.png"
+          class="size-8 rounded-xl shadow-md grid place-items-center text-white font-bold"
+        />
         <div>
           <h1 class="text-base font-semibold leading-tight">Media Editor</h1>
           <p class="text-xs text-muted-foreground">
-            Playful & Modern Minimalist
+            Your creative playground, powered by MEDIT.
           </p>
         </div>
       </div>
