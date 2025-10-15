@@ -25,8 +25,8 @@ const emit = defineEmits<{
 
 const classes = computed(() => {
   return [
-    "inline-flex items-center justify-center rounded-xl text-sm transition-colors",
-    props.size === "sm" ? "h-8 px-3" : "h-9 px-3",
+    "inline-flex items-center justify-center md:rounded-xl rounded-lg md:text-sm text-[10px] transition-colors",
+    props.size === "sm" ? "md:h-8 h-6 md:px-3 px-2" : "md:h-9 h-7 md:px-3 px-2",
     props.variant === "primary"
       ? "bg-primary text-primary-foreground shadow-sm"
       : "",

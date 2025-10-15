@@ -1,17 +1,21 @@
 <template>
-  <div class="min-h-dvh grid grid-cols-[72px_1fr_320px] grid-rows-[auto_1fr]">
+  <div
+    class="min-h-dvh max-h-dvh grid lg:grid-cols-[72px_1fr_320px] lg:grid-rows-[auto_1fr] md:grid-rows-[auto_80px_1fr_200px] grid-rows-[auto_48px_1fr_200px]"
+  >
     <!-- Top Bar -->
     <header
-      class="col-span-3 flex items-center justify-between px-4 py-3 border-b bg-gradient-to-r from-sky-50 via-fuchsia-50 to-pink-50"
+      class="lg:col-span-3 flex items-center justify-between px-4 py-3 border-b bg-gradient-to-r from-sky-50 via-fuchsia-50 to-pink-50"
     >
       <div class="flex items-center gap-3">
         <img
           src="/logo.png"
-          class="size-8 rounded-xl shadow-md grid place-items-center text-white font-bold"
+          class="md:size-8 size-6 rounded-xl shadow-md grid place-items-center text-white font-bold"
         />
         <div>
-          <h1 class="text-base font-semibold leading-tight">Media Editor</h1>
-          <p class="text-xs text-muted-foreground">
+          <h1 class="md:text-base text-xs font-semibold leading-tight">
+            Media Editor
+          </h1>
+          <p class="hidden md:block text-xs text-muted-foreground">
             Your creative playground, powered by MEDIT.
           </p>
         </div>
@@ -46,9 +50,9 @@
 
     <!-- Canvas Area -->
     <main class="relative bg-muted grid place-items-center overflow-hidden">
-      <div class="w-full h-full flex items-center justify-center p-4">
+      <div class="w-full h-full flex items-center justify-center md:p-4">
         <div
-          class="relative w-full h-full rounded-xl border bg-card shadow-sm overflow-hidden"
+          class="relative w-full h-full md:rounded-xl border bg-card shadow-sm overflow-hidden"
         >
           <!-- Canvas Wrapper for panning -->
           <div

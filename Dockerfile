@@ -1,41 +1,34 @@
-# Base image
-FROM node:22-alpine AS base
+# Build Stage 1
+
+FROM node:22-alpine AS build
 WORKDIR /app
-RUN apk add --no-cache libc6-compat
+
+RUN corepack enable
+
+# Copy package.json and your lockfile
+COPY package.json package-lock.json ./
 
 # Install dependencies
-FROM base AS deps
-COPY package*.json ./
-RUN npm ci
+RUN npm i
 
-# Build the application
-FROM base AS builder
-COPY --from=deps /app/node_modules ./node_modules
-COPY . .
+# Copy the entire project
+COPY . ./
+
+# Build the project
 RUN npm run build
 
-# Production image
-FROM node:22-alpine AS runner
+# Build Stage 2
+
+FROM node:22-alpine
 WORKDIR /app
 
-ENV NODE_ENV=production
+# Only `.output` folder is needed from the build stage
+COPY --from=build /app/.output/ ./
+
+# Change the port and host
 ENV PORT=3000
-
-# Non-root user
-RUN addgroup --system --gid 1001 nodejs \
- && adduser --system --uid 1001 nuxtjs
-
-# Copy only output and necessary files
-COPY --from=builder /app/.output ./.output
-COPY --from=builder /app/package*.json ./
-
-# Optional: install runtime deps only if needed
-RUN npm ci --only=production && npm cache clean --force
-
-# Change ownership
-RUN chown -R nuxtjs:nodejs /app
-USER nuxtjs
+ENV HOST=0.0.0.0
 
 EXPOSE 3000
-CMD ["node", ".output/server/index.mjs"]
 
+CMD ["node", "/app/server/index.mjs"]

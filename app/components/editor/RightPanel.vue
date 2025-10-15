@@ -1,5 +1,5 @@
 <template>
-  <section class="p-4 border-l bg-card">
+  <section class="p-4 border-l bg-card overflow-y-auto">
     <slot name="upload" v-if="tool === 'upload'"></slot>
 
     <slot name="resize" v-else-if="tool === 'resize' && imageLoaded"></slot>
