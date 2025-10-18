@@ -88,9 +88,7 @@ import {
   ZoomOut,
   ImageUp,
 } from "lucide-vue-next";
-import { useEditorStore } from "@/stores/editor";
 
-const store = useEditorStore();
 const { imageLoaded, tool } = defineProps<{
   imageLoaded: boolean;
   tool: "upload" | "adjust" | "filter" | "resize" | "crop" | "export";
